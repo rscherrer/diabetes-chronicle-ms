@@ -1,0 +1,18 @@
+Managing blood sugar in type 1 diabetes can be challenging.
+Already quite a lot of progress has been made for patients, thanks to continuous glucose monitoring (CGM) systems, for example, allowing a much more precise tracking of blood sugar levels than previous methods.
+However, one challenge for any insulin-dependent diabetic patient is to know how much insulin to inject when eating something.
+This is not trivial, as the right amount of insulin depends on the carbohydrates ingested, but also on confounding factors such as exercise, stress, alcohol and sickness (some of which, like alcohol and exercise, can have long-lasting effects).
+It also changes from one person to another, as well as with age for a given person.\\
+
+Usually, newly diagnosed patients are given a fixed amount of insulin to inject per meal, and are told how much carbs that amount of insulin corresponds to.
+They then try to stick to that amount of carbohydrates at every meal, as much as possible.
+It is possible to switch from that approach, where food is adapted to match the insulin injected, to a more flexible one where insulin can be adapted to accommodate the amount of food taken.
+This latter approach is called flexible insulin therapy. 
+Doing that, however, requires knowing precisely how much glucose can one's body absorb with a given amount of insulin, and that key variable must be measured on a case by case basis.\\
+
+Here, I set out to do just that for myself.
+To do that, I recorded basically everything happening in my life for a period of approximately two months, paying particular attention to amounts of carbohydrates eaten, insulin injected and physical activity.
+Then, for each meal, or more broadly for each period after having eaten and being under the influence of insulin, I computed the observed change in glycemia over a certain period of time until blood sugar stabilization, and recorded the ratio of insulin injected per gram of ingested glucose over that period of time.
+A regression analysis then allowed me to determine how much insulin I need to absorb a given amount of blood sugar, and given a certain desired change in glycemia.
+Some additional steps were taken to include possible effects of activity, alcohol and sickness.
+Unfortunately, the results did not seem reliable and so I did not end up using them, but I am still writing all this here, first, to remember how I did it, and second, in case it comes in useful some time in the future.
