@@ -1,0 +1,91 @@
+\subsection*{Data collection}
+
+The data were collected over a period of approximately two months in the summer of 2024.
+During that period, every glycemia measured, food intake, insulin injected and activity performed was recorded and timed.
+
+\paragraph{Glycemia} Blood sugar was captured with continuous glucose monitoring (CGM) sensors FreeStyle Libre 2 (Abbott Laboratories, Chicago, Illinois, USA), changed every 14 days.
+Glycemia was recorded in milligrams of glucose per deciliter of blood (mg/dL) with a FreeStyle Libre 2 reader version 1.2.2 1.03 (Abbott Laboratories).
+For every glycemia read, I noted whether it was \textit{crashing}, \textit{decreasing}, \textit{stagnating}, \textit{increasing} or \textit{spiking} (as reported by the reader).
+Glycemias that were too high (code ``HI'') or too low (code ``LO'') to be read by the reader were entered as \textit{non available}.
+
+\paragraph{Food} Each food item (or drink) consumed was weighed and its carbohydrate content (in grams) calculated. 
+The amount of carbohydrates was obtained from food packaging or from a general internet search.
+Each food intake was also assigned a precision score based on the certainty of the assessment.
+There, precisely measured foods scored as \textit{High}, foods of known weight but with approximately known sugar content (e.g. fruits) or the other way around (e.g. cooked rice or pasta when mixed with other things) scored as \textit{Medium}, and foods with both uncertain weight and uncertain content scored as \textit{Low}.
+
+\paragraph{Insulin} Each injection of insulin was recorded in number of units.
+The fast-acting insulin used was Humalog 100 units/mL (Lilly, Indianapolis, Indiana, USA). 
+I also recorded when a fast insulin pen was over and started a new one.
+
+\paragraph{Slow insulin} The slow-acting insulin was Tresiba 100 units/mL (Novo Nordisk, Bagsværd, Denmark). 
+I recorded each injection, and since the effect of  this insulin lasts for more than 24 hours, I recorded for each event whether I was under its influence if the last slow insulin was injected 25 hours before or less.
+
+\paragraph{Alcohol} I also estimated the alcohol content of each food and used it to assign a (subjective) inebriation status for each alcoholic beverage ingested.
+This status could take the values 0 (no alcohol), 1 (some alcohol taken but sober), 2 (more than a drink but not yet tipsy), 3 (tipsy) and 4 (drunk, not reached within the recorded data).
+
+\paragraph{Activity} Physical activity was recorded in terms of time, type of activity and intensity (\textit{Light}, \textit{Moderate} or \textit{Intense}).
+However, I noticed that physical intensity is a poor predictor of how exercise affects blood sugar, with the most intense activities such as calisthenics workouts barely affecting glycemia, and more stamina-based activities such as walking, biking or running affecting it much more.
+Therefore, I assigned an activity impact score to each recorded instance of physical exercise, based on my (subjective) perception of how impactful the activity is for my blood sugar.
+The possible values were 0 (no effect, e.g. workout or doing the dishes), 1 (quite negligible effect, e.g. walk or bike up to 15min, or cooking for up to 60min), 2 (moderate effect that requires precaution, in that I may have to eat something afterwards, e.g. walk between 15 and 60min, bike between 15 and 30min, cleaning chores of 30min or more), 3 (taxing effect, will have to eat unless very high in glycemia already, e.g. walk of 60min or more, bike of 30min or more) and 4 (very taxing, never to be done without sugar on me, e.g. running 45min or more).
+
+\paragraph{Sickness} Finally, I recorded whether I was sick or not during each of the aforementioned recorded events.
+
+\paragraph{Missing data} Some periods of time were not recorded and entered as \textit{Missing}.
+Other times, missing information in otherwise recorded events (e.g. missing carbohydrate content) was entered as \textit{non available}.
+
+\subsection*{Processing}
+
+I used the recorded database to identify (semi-)independent chunks of time, each to be used as data points in an analysis of how much a given amount of insulin affects glycemia, for a given amount of carbohydrates.
+Those stable chunks of time were identified as time spans between any two consecutive ``key'' glycemias.
+Glycemias were considered key glycemias when they were stable (recorded as \textit{stagnating} by the reader) and measured more than 1h30min, 2h ($\pm10$min) or 3h ($\pm 15$min) after the last insulin injection or food intake.
+These time thresholds were chosen to ensure that a given chunk of time was no longer under the influence of food or insulin from a previous period (so the higher the time threshold, the lower the influence but the lower the number of data points available).
+The analysis was repeated with each of these three time thresholds separately.
+Chunks of time containing \textit{Missing} events were discarded, and food or insulin taken 5min or less before the beginning of a chunk were not taken as influencing that chunk (not enough time to affect blood sugar).
+\textcolor{red}{So I should count them as part of the chunk in the analysis.}\\
+
+I then summarized relevant variables on a per-chunk basis.
+For each given time threshold ($1.5$, $2$ and $3$ hours), I extracted, for each identified chunk of time, (1) the starting time, (2) the end time, (3) stable blood sugar (i.e. ``key'' glycemia) at the starting time, (4) stable blood sugar at the end time, (5) the total amount of insulin injected during that time, (6) the total amount of carbohydrate ingested, (7) whether any of the carbohydrate content measured in that time was with low precision, (8) whether all of the time was spent under slow insulin, (9) whether the maximum inebriation status during that time was 2 or more (more than a drink was consumed), (10) whether the cumulative impact score of all physical activity during that time was 2 or more (the equivalent of more than two walks of 15min), (11) whether the time chunk was particularly long (more than 500min) and (12) whether I was sick at the start of the chunk.\\
+
+As a final step, I computed the ratio of insulin injected to glucose consumed (in units/g), and the observed change in glycemia (in mg/dL) for each chunk.
+The change in glycemia was then scaled by the amount of glucose consumed.
+This is because the change in glycemia is proportional to the amount of glucose left over in the blood (and not assimilated by the injected insulin) and not to the insulin-to-glucose ratio (e.g. enough insulin to assimilate half of the glucose in a food item will still leave twice as much glucose surplus in the blood when eating twice as much of that food item).
+This glucose surplus, in turn, is equal to the total amount of glucose ingested minus the amount absorbed, which is itself a proportion of the total glucose that is proportional to the insulin-to-glucose ratio.
+Hence, the change in glycemia $\Delta g$ can be written as
+
+\begin{equation}
+    \Delta g = \beta \, (G - \alpha \, I)
+    \label{eq:delta_g}
+\end{equation}
+
+\noindent where $G$ is the total amount of glucose, $I$ is the total amount of insulin injected, $\beta$ is the conversion constant of glucose surplus into a change in glycemia, and $\alpha$ is a conversion constant of insulin-to-glucose ratio into a proportion of glucose absorbed.
+It follows, in turn, that both $G$ and $I$ must be known to predict $\Delta g$, but that the ``re-scaled'' change in glycemia, $\Delta g / G$ can be known from knowing the insulin-to-glucose ratio $I / G$ alone.
+In what follows, I analyze statistically the effect of the insulin-to-glucose ratio on the scaled change in glycemia.\\ 
+
+Eyeballing the results (Fig. \ref{fig:overview}), I found that there were not many chunks with imprecise data or where I was not under slow insulin, for any of the time thresholds.
+For the subsequent analysis, I therefore only kept data points with medium-to-high precision, and fully covered by slow insulin, as this did not incur much data loss.
+Besides, chunks where some insulin was injected but no glucose were discarded, as they resulted in infinite insulin-to-glucose ratios.
+\textcolor{red}{Could analyze those alone though.}
+Finally, I discarded outliers, visually considered as having an insulin-to-glucose ratio greater than $0.4$.
+
+\subsection*{Analysis}
+
+I analyzed the data by performing a linear regression of the scaled change in glycemia against the ratio of insulin to glucose.
+Based on previous knowledge on what affects blood sugar I decided to treat activity, alcohol and sickness as (binary) confounding variables.
+As I did not notice any particular pattern with respect to insulin cartridge and whether chunks were very long (Fig. \ref{fig:overview}), I did not consider those two variables in the analysis.
+Besides, as the different combinations of activity, alcohol and sickness status were very uneven in numbers of observations (not shown), I decided not to include interaction effects between any of those confounding variables.\\
+
+In addition, a regression analysis with one regression line for each combination of activity, alcohol and sickness, resulted in odd slopes and seemed to suffer much from the reduction in degrees of freedom (not shown).
+\textcolor{red}{But it actually looks fine for 3 hours, so try with that?.}
+I therefore decided not to trust this analysis and instead fit four different models: (1) a general regression of scaled change in glycemia against insulin-to-glucose ratio, (2) same but with two regressions split by activity, (3) by alcohol and (4) by sickness (see e.g. Fig. \ref{fig:regressions}).
+I then extracted the regression parameters (slopes and intercepts) of the model with no confounder as representative of the ``normal'' state (no activity, no alcohol and not sick), and of the lines corresponding to activity, alcohol and sickness, in the three remaining respective models (Table \ref{tab:parameters}, with parameters $\alpha$ and $\beta$ inferred from equating the regression line equation of $\Delta g / G$ against $I / G$ to Equation \ref{eq:delta_g}).
+
+\subsection*{Predictions}
+
+I used the calculated parameters to predict the amount of insulin needed for any given amount of carbohydrate ingested and targeted change in glycemia.
+Depending on the state (activity, alcohol, sickness) and based on a certain time threshold (Table \ref{tab:parameters}), the formula to do that is
+
+\begin{equation}
+    I = \big(\Delta g - \text{intercept} * G\big) / \text{slope} \; ,
+\end{equation}
+
+\noindent in units of insulin.

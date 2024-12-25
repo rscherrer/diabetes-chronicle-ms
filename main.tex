@@ -1,14 +1,72 @@
-\documentclass{article}
-\usepackage{graphicx} % Required for inserting images
+\documentclass[]{article}
 
-\title{diabetes-chronicle-ms}
-\author{Raphaël Scherrer}
-\date{December 2024}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{authblk} % authors
+\usepackage{booktabs} % pretty tables
+
+% Supplementary Materials
+\newcommand{\beginsupplement}{
+	\setcounter{table}{0}
+	\renewcommand{\thetable}{S\arabic{table}}
+	\setcounter{figure}{0}
+	\renewcommand{\thefigure}{S\arabic{figure}}
+}
+
+\title{Estimating my insulin-to-glucose ratios in preparation for flexible insulin therapy as a patient with type 1 diabetes}
+
+\author{Rapha\"{e}l Scherrer}
+
+\date{}
 
 \begin{document}
 
 \maketitle
 
-\section{Introduction}
+\begin{abstract}
+	
+\input{sections/abstract.tex}
+
+\end{abstract}
+
+\paragraph{Keywords} glycemia, carbohydrates, sugar, continuous glucose monitoring (CGM), diabetes self-management
+
+\pagebreak
+
+\section*{Introduction}
+
+\input{sections/introduction.tex}
+
+\pagebreak
+
+\section*{Methods}
+
+\input{sections/methods.tex}
+
+\pagebreak
+
+\section*{Results}
+
+\input{sections/results.tex}
+
+\pagebreak
+
+\section*{Discussion}
+
+\input{sections/discussion.tex}
+
+\pagebreak
+
+\section*{Tables}
+
+\input{sections/tables.tex}
+
+\pagebreak
+
+\section*{Figures}
+
+\input{sections/figures.tex}
 
 \end{document}
